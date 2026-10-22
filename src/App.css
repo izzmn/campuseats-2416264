@@ -1,0 +1,77 @@
+:root {
+  --primary-color: #006654;
+  --bg-color: #f4f6f8;
+  --card-bg: #ffffff;
+  --text-color: #1a1a1a;
+  --text-muted: #666666;
+  --border-color: #e2e8f0;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header Navbar */
+.header {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header .logo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.header .nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.header .link {
+  background: none;
+  border: none;
+  color: white !important;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.header .badge {
+  background-color: white;
+  color: var(--primary-color);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-left: 4px;
+}
+
+/* Container */
+.container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Buttons and Inputs */
+button {
+  font-family: inherit;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2rem 0;
+}
