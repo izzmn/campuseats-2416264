@@ -4,7 +4,7 @@ function MenuItemCard({ item, onAdd }) {
       <div className="item-avatar">{item.name[0]}</div>
       <span className="category-tag">{item.category}</span>
       
-      {/* Add this spice badge display */}
+      {/* Spice badge display */}
       {item.spiceLevel > 0 && (
         <span className="spice-badge">🌶️ Spicy x{item.spiceLevel}</span>
       )}
