@@ -1,0 +1,27 @@
+<main>
+<h2>Contact Me</h2>
+<h3>My favourite place</h3>
+<iframe
+src="https://www.google.com/maps?q=Gombak,Selangor&output=embed"
+width="100%" height="300" loading="lazy"
+title="Map of my favourite place">
+</iframe>
+<h3>Any suggestions?</h3>
+<form id="suggestion-form">
+<label for="name">Your name</label>
+<input type="text" id="name" name="name" required>
+<label for="email">Email</label>
+<input type="email" id="email" name="email" required>
+<label for="topic">Topic</label>
+<select id="topic" name="topic">
+<option>Website</option>
+<option>Food</option>
+<option>Other</option>
+</select>
+<label for="message">Suggestion</label>
+<textarea id="message" name="message" rows="4" required></textarea>
+<button type="submit">Submit</button>
+</form>
+<p id="notice" class="notice hidden">Thank you! Your suggestion has been
+submitted.</p>
+</main>
