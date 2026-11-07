@@ -30,7 +30,9 @@ export default function VendorPage() {
         &larr; Back to Vendors
       </Link>
       <div style={{ backgroundColor: '#e8f5e9', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
-        <h2 style={{ color: '#1b5e20', margin: '0 0 0.5rem 0' }}>{vendor.name}</h2>
+<h2 style={{ color: '#1b5e20', margin: '0 0 0.5rem 0' }}>
+  {vendor.name} <span style={{ fontSize: '1rem', color: '#555', fontWeight: 'normal' }}>(2416264)</span>
+</h2>
         <p style={{ margin: '0.2rem 0', color: '#555' }}>{vendor.location}</p>
         <p style={{ margin: '0.2rem 0', color: '#555' }}>Open: {vendor.openHours}</p>
       </div>

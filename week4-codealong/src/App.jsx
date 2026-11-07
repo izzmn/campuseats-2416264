@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { CartProvider } from './context/CartProvider'; // Check exact export name in CartProvider.jsx
+import { CartProvider } from './context/CartProvider';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import VendorPage from './pages/VendorPage';
@@ -14,9 +14,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
-            <Route path="vendor/:vendorId" element={<VendorPage />} />
-            <Route path="cart" element={<CartPage />} />
             <Route path="orders" element={<OrdersPage />} />
+            <Route path="cart" element={<CartPage />} />
+            <Route path="vendor/:vendorId" element={<VendorPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
