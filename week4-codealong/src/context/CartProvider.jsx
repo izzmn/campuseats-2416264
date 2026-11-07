@@ -3,64 +3,35 @@ import { CartContext } from './cart-context';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useLocalStorage('campuseats_cart', []);
-  const [orders, setOrders] = useLocalStorage('campuseats_orders', []);
+  // Use localStorage so the cart persists across page refreshes ('campus-eats-cart' is the storage key)
+  const [cart, setCart] = useLocalStorage('campus-eats-cart', []);
 
-  // Compute total item count and dollar total
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-  const addToCart = (product) => {
+  const addToCart = (item) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === product.id);
-      if (existing) {
-        return prevCart.map((item) =>
-          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
-        );
+      // Check if item already exists in cart
+      const existingItemIndex = prevCart.findIndex((cartItem) => cartItem.id === item.id);
+      if (existingItemIndex > -1) {
+        // If it exists, increase quantity
+        const updated = [...prevCart];
+        updated[existingItemIndex] = {
+          ...updated[existingItemIndex],
+          quantity: (updated[existingItemIndex].quantity || 1) + 1
+        };
+        return updated;
       }
-      return [...prevCart, { ...product, qty: 1 }];
+      // Otherwise add new item with quantity 1
+      return [...prevCart, { ...item, quantity: 1 }];
     });
-  };
-
-  const changeQty = (id, qty) => {
-    if (qty <= 0) {
-      removeFromCart(id);
-      return;
-    }
-    setCart((prevCart) =>
-      prevCart.map((item) => (item.id === id ? { ...item, qty } : item))
-    );
   };
 
   const removeFromCart = (id) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
-  const placeOrder = (details) => {
-    const newOrder = {
-      id: Date.now(),
-      items: cart,
-      total,
-      details,
-      date: new Date().toISOString(),
-    };
-    setOrders((prev) => [newOrder, ...prev]);
-    setCart([]); // Clear cart after placing order
-  };
+  const clearCart = () => setCart([]);
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        orders,
-        count,
-        total,
-        addToCart,
-        changeQty,
-        removeFromCart,
-        placeOrder,
-      }}
-    >
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );

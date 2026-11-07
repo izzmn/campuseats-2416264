@@ -1,81 +1,64 @@
-// src/pages/VendorPage.jsx
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useVendors } from '../hooks/useVendors';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useCart } from '../hooks/useCart';
+import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import vendorsData from '../data/vendors';
+import MenuList from '../components/MenuList';
 
 export default function VendorPage() {
-  const { id } = useParams();
-  const { vendors, loading, error } = useVendors();
-  const { addToCart } = useCart();
-  
-  // Save max-spice setting with useLocalStorage
-  const [maxSpice, setMaxSpice] = useLocalStorage('campuseats_max_spice', 3);
+  const { vendorId } = useParams();
+  const [maxSpice, setMaxSpice] = useState(3); // Default max spice level
 
-  if (loading) return <div>Loading vendor...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  const vendor = vendors.find((v) => String(v.id) === String(id));
+  const vendor = vendorsData.find((v) => v.id === vendorId);
 
   if (!vendor) {
-    return <div className="not-found">Vendor not found</div>;
+    return (
+      <main style={{ padding: '2rem', textAlign: 'center' }}>
+        <h2>Vendor Not Found</h2>
+        <Link to="/" style={{ color: '#1b5e20', fontWeight: 'bold' }}>Back to Vendors</Link>
+      </main>
+    );
   }
 
-  // Filter items based on the max-spice setting
-  const filteredItems = (vendor.items || []).filter(
-    (item) => (item.spiceLevel || 0) <= Number(maxSpice)
-  );
+  // Filter menu items based on spice level (if spiceLevel is defined)
+  const filteredMenu = (vendor.menu || []).filter((item) => {
+    const spice = item.spiceLevel !== undefined ? item.spiceLevel : 0;
+    return spice <= maxSpice;
+  });
 
   return (
-    <div className="vendor-page" style={{ padding: '2rem' }}>
-      <h1>{vendor.name}</h1>
-      <p>{vendor.description}</p>
+    <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <Link to="/" style={{ textDecoration: 'none', color: '#1b5e20', fontWeight: 'bold', display: 'inline-block', marginBottom: '1rem' }}>
+        &larr; Back to Vendors
+      </Link>
+      <div style={{ backgroundColor: '#e8f5e9', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
+        <h2 style={{ color: '#1b5e20', margin: '0 0 0.5rem 0' }}>{vendor.name}</h2>
+        <p style={{ margin: '0.2rem 0', color: '#555' }}>{vendor.location}</p>
+        <p style={{ margin: '0.2rem 0', color: '#555' }}>Open: {vendor.openHours}</p>
+      </div>
 
-      {/* Spice Filter Control */}
-      <div className="spice-filter" style={{ margin: '20px 0' }}>
-        <label htmlFor="maxSpiceRange">
-          <strong>Max Spice Level Filter: </strong> {maxSpice}
+      {/* Max Spice Slider Filter */}
+      <div style={{ marginBottom: '1.5rem', backgroundColor: '#f9f9f9', padding: '1rem', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+        <label htmlFor="spiceRange" style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem', color: '#1b5e20' }}>
+          Max Spice Level: {maxSpice}
         </label>
-        <input
-          id="maxSpiceRange"
-          type="range"
-          min="0"
-          max="5"
-          value={maxSpice}
-          onChange={(e) => setMaxSpice(e.target.value)}
-          style={{ marginLeft: '10px' }}
+        <input 
+          id="spiceRange"
+          type="range" 
+          min="0" 
+          max="3" 
+          value={maxSpice} 
+          onChange={(e) => setMaxSpice(Number(e.target.value))}
+          style={{ width: '100%', accentColor: '#1b5e20' }}
         />
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666', marginTop: '0.3rem' }}>
+          <span>0 (Not Spicy)</span>
+          <span>1 (Mild)</span>
+          <span>2 (Medium)</span>
+          <span>3 (Extra Spicy)</span>
+        </div>
       </div>
 
-      <h2>Menu</h2>
-      <div className="menu-list">
-        {filteredItems.length === 0 ? (
-          <p>No menu items match your spice preference.</p>
-        ) : (
-          filteredItems.map((item) => (
-            <div key={item.id} className="menu-item" style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '10px', borderRadius: '5px' }}>
-              <h3>{item.name}</h3>
-              <p>{item.description}</p>
-              <p>Price: ${item.price.toFixed(2)}</p>
-              
-              {/* Spice-level Badge */}
-              {item.spiceLevel > 0 && (
-                <span className="spice-badge" style={{ background: '#ffdddd', color: '#d9534f', padding: '3px 8px', borderRadius: '4px', fontSize: '0.85em', display: 'inline-block', marginBottom: '10px' }}>
-                  🌶️ Spice Level: {item.spiceLevel}
-                </span>
-              )}
-
-              <button 
-                onClick={() => addToCart(item)}
-                style={{ display: 'block', padding: '8px 12px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                Add to Cart
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
+      <h3 style={{ marginBottom: '1rem' }}>Menu ({filteredMenu.length} items)</h3>
+      <MenuList menu={filteredMenu} />
+    </main>
   );
 }

@@ -1,31 +1,44 @@
-// src/pages/CartPage.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 
 export default function CartPage() {
-  const { cart, total, changeQty, removeFromCart, placeOrder } = useCart();
-  const navigate = useNavigate();
+  const { cart = [], removeFromCart, clearCart } = useCart();
 
-  const handleCheckout = () => {
-    if (cart.length === 0) return;
-    placeOrder({ note: 'Standard Delivery' });
-    navigate('/orders');
-  };
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.price * (item.quantity || 1),
+    0
+  );
 
   if (cart.length === 0) {
     return (
-      <div style={{ padding: '2rem' }}>
+      <main style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
         <h2>Your Cart is Empty</h2>
-        <p>Add some items from the vendor pages to get started!</p>
-      </div>
+        <p style={{ color: '#666', marginBottom: '1.5rem' }}>
+          Looks like you haven't added any food items yet.
+        </p>
+        <Link
+          to="/"
+          style={{
+            backgroundColor: '#1b5e20',
+            color: '#ffffff',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '4px',
+            textDecoration: 'none',
+            fontWeight: 'bold'
+          }}
+        >
+          Browse Vendors
+        </Link>
+      </main>
     );
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>Your Shopping Cart</h2>
-      <div style={{ marginTop: '1rem' }}>
+    <main style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+      <h2 style={{ color: '#1b5e20', marginBottom: '1.5rem' }}>Your Cart</h2>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {cart.map((item) => (
           <div
             key={item.id}
@@ -33,19 +46,33 @@ export default function CartPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderBottom: '1px solid #ddd',
-              padding: '10px 0',
+              border: '1px solid #e0e0e0',
+              padding: '1rem',
+              borderRadius: '8px',
+              backgroundColor: '#ffffff'
             }}
           >
             <div>
-              <h4>{item.name}</h4>
-              <p>Price: ${item.price.toFixed(2)}</p>
+              <h4 style={{ margin: '0 0 0.3rem 0' }}>{item.name}</h4>
+              <p style={{ margin: 0, color: '#666', fontSize: '0.9rem' }}>
+                RM {Number(item.price).toFixed(2)} x {item.quantity || 1}
+              </p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <button onClick={() => changeQty(item.id, item.qty - 1)}>-</button>
-              <span>{item.qty}</span>
-              <button onClick={() => changeQty(item.id, item.qty + 1)}>+</button>
-              <button onClick={() => removeFromCart(item.id)} style={{ color: 'red' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span style={{ fontWeight: 'bold', color: '#1b5e20' }}>
+                RM {(item.price * (item.quantity || 1)).toFixed(2)}
+              </span>
+              <button
+                onClick={() => removeFromCart(item.id)}
+                style={{
+                  backgroundColor: '#c62828',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
                 Remove
               </button>
             </div>
@@ -53,24 +80,50 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div style={{ marginTop: '2rem', fontSize: '1.2rem', fontWeight: 'bold' }}>
-        Total: ${total.toFixed(2)}
-      </div>
-
-      <button
-        onClick={handleCheckout}
+      <div
         style={{
-          marginTop: '1rem',
-          padding: '10px 20px',
-          background: 'green',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
+          marginTop: '2rem',
+          paddingTop: '1rem',
+          borderTop: '2px solid #e0e0e0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}
       >
-        Place Order
-      </button>
-    </div>
+        <h3>Total: RM {totalPrice.toFixed(2)}</h3>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button
+            onClick={clearCart}
+            style={{
+              backgroundColor: '#757575',
+              color: '#ffffff',
+              border: 'none',
+              padding: '0.6rem 1.2rem',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Clear Cart
+          </button>
+          <button
+            onClick={() => {
+              alert('Order placed successfully!');
+              clearCart();
+            }}
+            style={{
+              backgroundColor: '#1b5e20',
+              color: '#ffffff',
+              border: 'none',
+              padding: '0.6rem 1.2rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Checkout
+          </button>
+        </div>
+      </div>
+    </main>
   );
 }
